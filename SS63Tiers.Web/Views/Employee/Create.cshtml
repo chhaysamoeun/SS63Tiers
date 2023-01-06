@@ -1,0 +1,108 @@
+﻿@{
+    ViewData["Title"] = "Create New";
+}
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <div class="form-group">
+                <label class="form-label" for="DepartmentId">Department</label>
+                <select class="form-control" name="DepartmentId" id="DepartmentId">
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="PositionId">Position</label>
+                <select class="form-control" name="PositionId" id="PositionId">
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="EmployeeName">Employee Name</label>
+                <input class="form-control" name="EmployeeName" id="EmployeeName" />
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="Gender">Gender</label>
+                <select class="form-control" name="Gender" id="Gender">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="form-group">
+                <label class="form-label" for="Email">Email</label>
+                <input type="email" class="form-control" name="Email" id="Email" />
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="EmployeeName">Date Of Birth</label>
+                <input type="date" class="form-control" name="DateOfBirth" id="DateOfBirth" />
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="Address">Address</label>
+                <textarea type="date" class="form-control" name="Address" id="Address"></textarea>
+            </div>
+            <br />
+            <button class="btn btn-primary" id="save">
+                <i class="fa-sharp fa-solid fa-floppy-disk"></i> Save
+            </button>
+        </div>
+    </div>
+   
+</div>
+@section Scripts{
+    <script>
+        var baseUrl = "https://localhost:7001/api/";
+        var departmentOpt = "<option>Select..</option>";
+        var positionOpt = "<option>Select..</option>";
+        $(document).ready(function () {
+            $("#save").click(function () {
+                var employee = {
+                    "EmployeeName": $("#EmployeeName").val(),
+                    "Gender": $("#Gender").val(),
+                    "PhoneNumber": $("#PhoneNumber").val(),
+                    "DateOfBirth": $("#DateOfBirth").val(),
+                    "Email": $("#Email").val(),
+                    "DepartmentId": $("#DepartmentId").val(),
+                    "PositionId": $("#PositionId").val()
+                };
+                $.ajax({
+                    method: "POST",
+                    url: baseUrl + "Employee",
+                    data: JSON.stringify(employee),
+                    contentType: "application/json",
+                    success: function (resp, status, http) {
+                        if (http.status === 201) {
+                            window.location.href = "/Employee/Index";
+                        }
+                    }, error: function (error) {
+                        console.log(error);
+                    }
+                });
+            });
+            $.ajax({
+                method: "GET",
+                url: baseUrl +"Department",
+                contentType: "application/json",
+                success: function (data) {
+                    $.each(data, function (i, v) {
+                        departmentOpt += "<option value='"+ v.departmentId +"'>"+ v.departmentName +"</option>";
+                    });
+                    $("#DepartmentId").append(departmentOpt);
+                }, error: function (error) {
+                    console.log(error);
+                }
+            });
+            $.ajax({
+                method: "GET",
+                url: baseUrl + "Position",
+                contentType: "application/json",
+                success: function (data) {
+                    $.each(data, function (i, v) {
+                        positionOpt += "<option value='" + v.positionId + "'>" + v.positionName + "</option>";
+                    });
+                    $("#PositionId").append(positionOpt);
+                }, error: function (error) {
+                    console.log(error);
+                }
+            });
+        });
+    </script>
+}
